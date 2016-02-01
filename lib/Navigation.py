@@ -175,14 +175,24 @@ class SteeringNavigation(avango.script.Script):
         if self.navigation_mode == 0: # steering mode
             ## implement steering input
             # ...
+            #x= value[0][3], y = value[1][3], z = value[2][3]
+            #Another option to get the value
+            #head_x = self.sf_head_mat.value.get_translate()[0]
+            head_x = self.sf_head_mat.value.get_element(0,3)
+            head_y = self.sf_head_mat.value.get_element(1,3)
+            head_z = self.sf_head_mat.value.get_element(2,3)
+            new_center_offset = avango.gua.Vec3(head_x,head_y,head_z)
+
+            print(new_center_offset)
+
             if _trans_input or _rot_input > 0.0:
                 self.sf_nav_mat.value = self.sf_nav_mat.value * \
                                     avango.gua.make_trans_mat(_trans_vec) * \
-                                    avango.gua.make_trans_mat(self.rot_center_offset) * \
+                                    avango.gua.make_trans_mat(new_center_offset) * \
                                     avango.gua.make_rot_mat(_rot_vec.y,0,1,0) * \
                                     avango.gua.make_rot_mat(_rot_vec.x,1,0,0) * \
                                     avango.gua.make_rot_mat(_rot_vec.z,0,0,1) * \
-                                    avango.gua.make_trans_mat(self.rot_center_offset * -1)
+                                    avango.gua.make_trans_mat(new_center_offset * -1)
 
         elif self.navigation_mode == 1: # maneuvering mode
             ## implement maneuvering input
